@@ -5,6 +5,33 @@ import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import { v2 as cloudinary } from 'cloudinary'
+import Stripe from "stripe";
+import Razorpay from "razorpay";
+
+// ---------------- GATEWAY INITIALIZE ----------------
+
+// Stripe (safe)
+let stripeInstance = null;
+
+if (process.env.STRIPE_SECRET_KEY) {
+  stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+  console.log("Stripe initialized");
+} else {
+  console.log("Stripe not initialized (key not provided)");
+}
+
+// Razorpay (safe)
+let razorpay = null;
+
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+  console.log("Razorpay initialized");
+} else {
+  console.log("Razorpay not initialized (keys not provided)");
+}
 
 
 // API to register user
