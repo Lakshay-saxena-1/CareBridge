@@ -5,15 +5,34 @@ import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import { v2 as cloudinary } from 'cloudinary'
-import stripe from "stripe";
-import razorpay from 'razorpay';
+import Stripe from "stripe";
+import Razorpay from "razorpay";
 
-// Gateway Initialize
-const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
-const razorpayInstance = new razorpay({
+// ---------------- GATEWAY INITIALIZE ----------------
+
+// Stripe (safe)
+let stripeInstance = null;
+
+if (process.env.STRIPE_SECRET_KEY) {
+  stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+  console.log("Stripe initialized");
+} else {
+  console.log("Stripe not initialized (key not provided)");
+}
+
+// Razorpay (safe)
+let razorpay = null;
+
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
-})
+  });
+  console.log("Razorpay initialized");
+} else {
+  console.log("Razorpay not initialized (keys not provided)");
+}
+
 
 // API to register user
 const registerUser = async (req, res) => {
